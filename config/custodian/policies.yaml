@@ -1,0 +1,169 @@
+# Cloud Custodian policies for CASB simulation
+# These policies simulate cloud access security broker functionality
+
+policies:
+  # Data Loss Prevention - Monitor file uploads
+  - name: monitor-file-uploads
+    resource: aws.s3
+    description: Monitor and alert on sensitive file uploads to cloud storage
+    filters:
+      - type: value
+        key: name
+        op: regex
+        value: '.*\.(doc|docx|pdf|xls|xlsx|csv)$'
+    actions:
+      - type: notify
+        violation_desc: "Sensitive file detected in cloud storage"
+        action_desc: "Review file content for data classification"
+        to:
+          - sase-admin@lab.local
+        transport:
+          type: sqs
+          queue: sase-alerts
+
+  # Shadow IT Detection - Unapproved cloud services
+  - name: detect-shadow-it
+    resource: aws.cloudtrail
+    description: Detect usage of unapproved cloud services
+    filters:
+      - type: event
+        key: eventName
+        op: in
+        value:
+          - CreateBucket
+          - PutObject
+          - CreateDatabase
+          - LaunchInstance
+      - type: value
+        key: userIdentity.type
+        value: User
+    actions:
+      - type: notify
+        violation_desc: "Unapproved cloud service usage detected"
+        action_desc: "Verify if service usage is authorized"
+
+  # Compliance Monitoring - Data residency
+  - name: data-residency-compliance
+    resource: aws.rds
+    description: Ensure databases are in approved regions
+    filters:
+      - type: value
+        key: region
+        op: not-in
+        value:
+          - us-east-1
+          - us-west-2
+          - eu-west-1
+    actions:
+      - type: notify
+        violation_desc: "Database created in non-approved region"
+        action_desc: "Move database to compliant region or request exception"
+
+  # User Behavior Analytics - Anomalous access patterns
+  - name: monitor-anomalous-access
+    resource: aws.iam-user
+    description: Monitor for unusual user access patterns
+    filters:
+      - type: credential-report
+      - type: value
+        key: access_key_1_last_used_date
+        op: greater-than
+        value_type: age
+        value: 90
+    actions:
+      - type: notify
+        violation_desc: "User has unused access keys for 90+ days"
+        action_desc: "Review and disable unused access keys"
+
+  # Cloud Configuration Security
+  - name: public-s3-buckets
+    resource: aws.s3
+    description: Detect publicly accessible S3 buckets
+    filters:
+      - type: bucket-policy
+        key: Statement[?Effect=='Allow'][?Principal=='*']
+        value: present
+    actions:
+      - type: notify
+        violation_desc: "Publicly accessible S3 bucket detected"
+        action_desc: "Review bucket policy and restrict access"
+      - type: remove-statements
+        statement_ids:
+          - PublicRead
+
+  # Malware Detection Simulation
+  - name: malware-detection
+    resource: aws.s3
+    description: Simulate malware detection in uploaded files
+    filters:
+      - type: value
+        key: name
+        op: regex
+        value: '.*\.(exe|bat|scr|vbs|js|jar)$'
+    actions:
+      - type: notify
+        violation_desc: "Potentially malicious file detected"
+        action_desc: "Quarantine file and scan for malware"
+      - type: mark-for-op
+        op: delete
+        days: 1
+
+  # API Security Monitoring
+  - name: monitor-api-usage
+    resource: aws.cloudtrail
+    description: Monitor API calls for security analysis
+    filters:
+      - type: event
+        key: errorCode
+        value: present
+      - type: value
+        key: errorCode
+        op: in
+        value:
+          - AccessDenied
+          - UnauthorizedOperation
+          - InvalidUserID.NotFound
+    actions:
+      - type: notify
+        violation_desc: "Failed API calls detected - possible attack"
+        action_desc: "Investigate source IP and user activity"
+
+  # Encryption Compliance
+  - name: unencrypted-storage
+    resource: aws.ebs
+    description: Ensure all storage volumes are encrypted
+    filters:
+      - type: value
+        key: encrypted
+        value: false
+    actions:
+      - type: notify
+        violation_desc: "Unencrypted storage volume detected"
+        action_desc: "Enable encryption for compliance"
+
+  # Network Security Monitoring
+  - name: monitor-network-changes
+    resource: aws.security-group
+    description: Monitor security group changes
+    filters:
+      - type: ingress
+        ports: [22, 3389, 1433, 3306]
+        cidr: "0.0.0.0/0"
+    actions:
+      - type: notify
+        violation_desc: "High-risk port exposed to internet"
+        action_desc: "Review and restrict access to administrative ports"
+
+  # Identity and Access Monitoring
+  - name: monitor-privileged-access
+    resource: aws.iam-role
+    description: Monitor creation of privileged roles
+    filters:
+      - type: has-inline-policy
+      - type: policy
+        key: PolicyDocument.Statement[?Effect=='Allow'][?Action=='*'][?Resource=='*']
+        value: present
+    actions:
+      - type: notify
+        violation_desc: "Role with full administrative access created"
+        action_desc: "Review role necessity and apply principle of least privilege"

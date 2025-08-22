@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Service - Internet Simulation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #e74c3c 0%, #c0392b 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .warning-banner {
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .threat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .threat-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #e74c3c;
+        }
+        .threat-card.malware {
+            border-left-color: #8e44ad;
+        }
+        .threat-card.phishing {
+            border-left-color: #f39c12;
+        }
+        .threat-card.botnet {
+            border-left-color: #34495e;
+        }
+        .attack-simulation {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #e74c3c;
+        }
+        .blocked-content {
+            background: rgba(231, 76, 60, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px dashed #e74c3c;
+        }
+        .security-bypass {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 20px 0;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning-banner">
+            ⚠️ EXTERNAL INTERNET SIMULATION - CONTAINS SIMULATED THREATS FOR TESTING ⚠️
+        </div>
+
+        <div class="header" style="text-align: center; margin-bottom: 40px;">
+            <h1>🌐 External Internet Services</h1>
+            <p>Untrusted Network - Testing SASE Security Controls</p>
+            <p style="opacity: 0.8;">Network: External/Internet (192.168.200.0/24)</p>
+        </div>
+
+        <div class="attack-simulation">
+            <h3>🎯 SASE Testing Scenarios</h3>
+            <p>This service simulates various external threats and attack vectors to test SASE security components:</p>
+            <ul>
+                <li>Secure Web Gateway filtering and blocking</li>
+                <li>Firewall rule enforcement</li>
+                <li>Zero Trust Network Access controls</li>
+                <li>CASB cloud security monitoring</li>
+                <li>SD-WAN traffic routing and inspection</li>
+            </ul>
+        </div>
+
+        <div class="threat-grid">
+            <div class="threat-card malware">
+                <h3>🦠 Malware Distribution</h3>
+                <p>Simulated malware hosting service for testing web filtering and download protection.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY SWG:</strong> malicious-payload.exe<br>
+                    <small>Threat detected: Trojan.Win32.Generic</small>
+                </div>
+            </div>
+
+            <div class="threat-card phishing">
+                <h3>🎣 Phishing Websites</h3>
+                <p>Fake login pages and credential harvesting sites to test user awareness and URL filtering.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY SWG:</strong> fake-bank-login.html<br>
+                    <small>Category: Phishing/Fraud</small>
+                </div>
+            </div>
+
+            <div class="threat-card botnet">
+                <h3>🤖 Command & Control</h3>
+                <p>Simulated botnet C&C server for testing outbound connection monitoring and blocking.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY FIREWALL:</strong> C&C communication<br>
+                    <small>Destination: suspicious-domain.net:443</small>
+                </div>
+            </div>
+
+            <div class="threat-card">
+                <h3>💀 Exploit Kits</h3>
+                <p>Web-based exploit delivery mechanisms targeting browser vulnerabilities.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY SWG:</strong> exploit-landing-page<br>
+                    <small>Threat: CVE-2024-XXXX exploit</small>
+                </div>
+            </div>
+
+            <div class="threat-card">
+                <h3>🕳️ Data Exfiltration</h3>
+                <p>Unauthorized cloud storage services and file sharing platforms.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY CASB:</strong> Unauthorized cloud upload<br>
+                    <small>Service: unauthorized-cloud-storage.com</small>
+                </div>
+            </div>
+
+            <div class="threat-card">
+                <h3>🔓 Credential Stuffing</h3>
+                <p>Automated login attempts using stolen credential databases.</p>
+                <div class="blocked-content">
+                    <strong>BLOCKED BY ZTNA:</strong> Suspicious login pattern<br>
+                    <small>Rate limit exceeded from 192.168.200.50</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-bypass">
+            <h4>🔍 SASE Security Response Log</h4>
+            <div>2025-08-22 14:31:25 - [SWG] Blocked malware download: exploit.exe from malicious-site.net</div>
+            <div>2025-08-22 14:30:45 - [FIREWALL] Denied outbound connection to known C&C server 203.0.113.99:8080</div>
+            <div>2025-08-22 14:29:33 - [CASB] Shadow IT detected: Unauthorized Dropbox access attempt blocked</div>
+            <div>2025-08-22 14:28:15 - [ZTNA] Authentication failed: Invalid certificate from external source</div>
+            <div>2025-08-22 14:27:02 - [SWG] Phishing site blocked: fake-banking-portal.com</div>
+            <div>2025-08-22 14:26:18 - [DLP] Sensitive data upload blocked: SSN pattern detected in file</div>
+            <div>2025-08-22 14:25:44 - [SD-WAN] Suspicious traffic pattern detected and rerouted through security stack</div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h4>📊 Attack Statistics (Last 24 Hours)</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <div style="font-size: 2em; color: #e74c3c;">2,847</div>
+                    <div>Malware Blocked</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <div style="font-size: 2em; color: #f39c12;">1,256</div>
+                    <div>Phishing Attempts</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <div style="font-size: 2em; color: #8e44ad;">564</div>
+                    <div>C&C Connections</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <div style="font-size: 2em; color: #2ecc71;">99.7%</div>
+                    <div>Block Success Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
+            <h4>🧪 Lab Testing Instructions</h4>
+            <p>Use this external service to test various SASE security controls:</p>
+            <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <li>Try accessing malware URLs to test SWG blocking</li>
+                <li>Attempt unauthorized cloud uploads to test CASB</li>
+                <li>Test network access controls with ZTNA</li>
+                <li>Monitor SD-WAN routing and security inspection</li>
+                <li>Review security logs in Kibana dashboard</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <p>⚠️ External/Untrusted Network | 🚫 All Malicious Content Simulated</p>
+            <p>Network: External (192.168.200.0/24) | Security Level: Untrusted</p>
+        </div>
+    </div>
+</body>
+</html>

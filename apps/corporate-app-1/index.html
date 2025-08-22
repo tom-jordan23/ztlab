@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Application - HR Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #2c3e50 0%, #3498db 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .app-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, background 0.3s;
+            cursor: pointer;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .app-card h3 {
+            margin-top: 0;
+            color: #ffd700;
+            font-size: 1.4em;
+        }
+        .app-card p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .security-status {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .security-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+        .secure {
+            background: #27ae60;
+        }
+        .protected {
+            background: #3498db;
+        }
+        .encrypted {
+            background: #9b59b6;
+        }
+        .access-log {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Corporate HR Portal</h1>
+            <p>Secure Internal Application - Zero Trust Protected</p>
+        </div>
+
+        <div class="security-status">
+            <h3>🔒 Security Status</h3>
+            <span class="security-badge secure">✅ ZTNA Protected</span>
+            <span class="security-badge protected">🛡️ Firewall Enabled</span>
+            <span class="security-badge encrypted">🔐 End-to-End Encrypted</span>
+            <span class="security-badge secure">👤 Identity Verified</span>
+        </div>
+
+        <div class="app-grid">
+            <div class="app-card">
+                <h3>📋 Employee Directory</h3>
+                <p>Search and view employee contact information, organizational structure, and department details.</p>
+                <small>Last accessed: 2 minutes ago</small>
+            </div>
+
+            <div class="app-card">
+                <h3>💰 Payroll System</h3>
+                <p>Access payroll information, tax documents, and benefits enrollment. Highly sensitive data.</p>
+                <small>Requires additional authentication</small>
+            </div>
+
+            <div class="app-card">
+                <h3>🎯 Performance Reviews</h3>
+                <p>Submit and review employee performance evaluations, goal setting, and career development plans.</p>
+                <small>Annual review cycle active</small>
+            </div>
+
+            <div class="app-card">
+                <h3>🏖️ Time Off Requests</h3>
+                <p>Submit vacation requests, sick leave, and view PTO balances. Automated approval workflow.</p>
+                <small>3 pending requests</small>
+            </div>
+
+            <div class="app-card">
+                <h3>🎓 Training Portal</h3>
+                <p>Access mandatory training courses, compliance certifications, and skill development programs.</p>
+                <small>2 courses due this month</small>
+            </div>
+
+            <div class="app-card">
+                <h3>📊 Analytics Dashboard</h3>
+                <p>HR metrics, employee satisfaction surveys, and departmental analytics for management.</p>
+                <small>Executive access only</small>
+            </div>
+        </div>
+
+        <div class="access-log">
+            <h4>Recent Access Log (SIEM Integration)</h4>
+            <div>2025-08-22 14:30:15 - User: alice.smith@corp.com - Action: LOGIN - Source: 10.10.1.25 - Status: SUCCESS</div>
+            <div>2025-08-22 14:29:45 - User: bob.jones@corp.com - Action: VIEW_PAYROLL - Source: 10.10.1.30 - Status: SUCCESS</div>
+            <div>2025-08-22 14:28:12 - User: carol.white@corp.com - Action: SUBMIT_PTO - Source: 10.10.1.18 - Status: SUCCESS</div>
+            <div>2025-08-22 14:27:33 - User: unknown - Action: LOGIN_ATTEMPT - Source: 192.168.200.50 - Status: BLOCKED</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <p>🔐 This application is protected by SASE Zero Trust Architecture</p>
+            <p>Network: Corporate Internal (10.10.0.0/16) | Application ID: CORP-HR-001</p>
+        </div>
+    </div>
+</body>
+</html>

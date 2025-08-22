@@ -1,0 +1,334 @@
+# SASE Lab .gitignore
+# Keep secrets, sensitive data, and runtime files out of version control
+
+# =============================================================================
+# SECRETS AND SENSITIVE DATA
+# =============================================================================
+
+# Environment files with secrets
+.env
+.env.*
+!.env.example
+
+# Certificate files and keys
+*.key
+*.crt
+*.pem
+*.p12
+*.pfx
+*.jks
+certificates/
+certs/
+keys/
+ssl/
+
+# Database files and backups
+*.db
+*.sqlite
+*.sqlite3
+dumps/
+backups/
+
+# Configuration files that may contain secrets
+config/*/secrets/
+config/*/private/
+config/*/*.key
+config/*/*.crt
+config/*/*.pem
+
+# SSH keys
+id_rsa*
+id_ed25519*
+known_hosts
+
+# =============================================================================
+# RUNTIME DATA AND LOGS
+# =============================================================================
+
+# Container runtime data
+data/
+logs/
+*.log
+log/
+
+# Docker volumes and bind mounts
+config/zitadel/postgres/
+config/custodian/data/
+config/elasticsearch/data/
+config/kibana/data/
+config/logstash/data/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# PID files
+*.pid
+
+# =============================================================================
+# DOCKER AND CONTAINER DATA
+# =============================================================================
+
+# Docker Compose override files (may contain environment-specific secrets)
+docker-compose.override.yml
+docker-compose.override.yaml
+docker-compose.prod.yml
+docker-compose.local.yml
+
+# Docker build context files that shouldn't be tracked
+Dockerfile.local
+.dockerignore.local
+
+# =============================================================================
+# IDE AND EDITOR FILES
+# =============================================================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# BACKUP AND ARCHIVE FILES
+# =============================================================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+*.swp
+*.swo
+
+# Archive files (often contain sensitive data)
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+
+# =============================================================================
+# SECURITY SCANNER AND TOOL OUTPUT
+# =============================================================================
+
+# Security scan results
+*.sarif
+security-scan-results/
+vulnerability-reports/
+pen-test-results/
+
+# Tool output that may contain sensitive info
+nmap-results/
+gobuster-output/
+burp-*.xml
+zap-*.xml
+
+# =============================================================================
+# LAB-SPECIFIC EXCLUSIONS
+# =============================================================================
+
+# Generated lab data that shouldn't be versioned
+lab-data/
+test-results/
+simulation-output/
+
+# User-specific lab configurations
+config/user/
+config/personal/
+my-*.yml
+my-*.yaml
+personal-*.conf
+
+# Lab exercise answers and solutions
+solutions/
+answers/
+student-work/
+
+# Generated certificates and keys for lab exercises
+lab-certs/
+demo-keys/
+exercise-*/private/
+
+# Runtime state files
+.last-run
+.lab-state
+session-*.json
+
+# Performance and monitoring data
+metrics/
+traces/
+profiling/
+
+# =============================================================================
+# CLOUD AND DEPLOYMENT SECRETS
+# =============================================================================
+
+# Cloud provider credentials
+.aws/
+.azure/
+.gcp/
+.kube/config
+kubeconfig*
+
+# Terraform state (may contain secrets)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Ansible vault files
+vault.yml
+vault.yaml
+*.vault
+
+# =============================================================================
+# PACKAGE MANAGERS AND DEPENDENCIES
+# =============================================================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Go
+vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# =============================================================================
+# EXAMPLES TO KEEP
+# =============================================================================
+
+# Keep example files for documentation
+!config/examples/
+!*.example
+!*.template
+!sample-*
+
+# Keep documentation assets
+!docs/
+!*.md
+!LICENSE
+!README*
+
+# =============================================================================
+# FINAL NOTES
+# =============================================================================
+
+# This .gitignore is designed for the SASE lab environment
+# Always review files before committing to ensure no secrets are included
+# For additional security, consider using git-secrets or similar tools
+# Regular security audits of the repository are recommended

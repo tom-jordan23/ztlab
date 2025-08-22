@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Application - File Server</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #34495e 0%, #2c3e50 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .file-browser {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .file-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            width: 30px;
+        }
+        .file-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        .file-size {
+            color: #bdc3c7;
+            margin-right: 15px;
+        }
+        .file-date {
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .security-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .security-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #e74c3c;
+        }
+        .security-card.dlp {
+            border-left-color: #f39c12;
+        }
+        .security-card.encryption {
+            border-left-color: #3498db;
+        }
+        .security-card.access {
+            border-left-color: #2ecc71;
+        }
+        .threat-detection {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 Corporate File Server</h1>
+            <p>Secure Document Management System - CASB Protected</p>
+        </div>
+
+        <div class="security-features">
+            <div class="security-card dlp">
+                <h4>🔍 Data Loss Prevention</h4>
+                <p>Real-time scanning for sensitive data patterns, PII detection, and policy enforcement.</p>
+            </div>
+            <div class="security-card encryption">
+                <h4>🔐 Encryption at Rest</h4>
+                <p>All files encrypted with AES-256. Keys managed by enterprise key management system.</p>
+            </div>
+            <div class="security-card access">
+                <h4>👥 Access Control</h4>
+                <p>Role-based permissions with audit logging. Integration with Active Directory.</p>
+            </div>
+        </div>
+
+        <div class="threat-detection">
+            <h4>⚠️ CASB Threat Detection Active</h4>
+            <p>Monitoring for: Malware uploads, Data exfiltration attempts, Unusual access patterns, Shadow IT usage</p>
+        </div>
+
+        <div class="upload-area">
+            <h3>📤 Secure File Upload</h3>
+            <p>Drop files here or click to browse. All uploads are scanned for malware and data classification.</p>
+            <small>Maximum file size: 100MB | Allowed types: PDF, DOC, XLS, PPT, TXT, ZIP</small>
+        </div>
+
+        <div class="file-browser">
+            <h3>📂 Corporate Documents</h3>
+            
+            <div class="file-item">
+                <div class="file-icon">📁</div>
+                <div class="file-name">Financial Reports</div>
+                <div class="file-size">--</div>
+                <div class="file-date">Last modified: 2025-08-20</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📁</div>
+                <div class="file-name">HR Documents</div>
+                <div class="file-size">--</div>
+                <div class="file-date">Last modified: 2025-08-21</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📄</div>
+                <div class="file-name">Q3-2025-Financial-Statement.pdf</div>
+                <div class="file-size">2.5 MB</div>
+                <div class="file-date">2025-08-22 09:15</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Employee-Database-Export.xlsx</div>
+                <div class="file-size">856 KB</div>
+                <div class="file-date">2025-08-22 08:30</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📝</div>
+                <div class="file-name">Security-Policy-2025.docx</div>
+                <div class="file-size">1.2 MB</div>
+                <div class="file-date">2025-08-21 16:45</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">🔒</div>
+                <div class="file-name">Confidential-Merger-Plans.pdf</div>
+                <div class="file-size">4.1 MB</div>
+                <div class="file-date">2025-08-22 11:20</div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">⚠️</div>
+                <div class="file-name">suspicious-file.exe</div>
+                <div class="file-size">15 KB</div>
+                <div class="file-date">QUARANTINED - Malware detected</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h4>🔐 CASB Activity Log</h4>
+            <div style="font-family: monospace; font-size: 0.9em;">
+                <div>2025-08-22 14:25:10 - File: Q3-Financial-Statement.pdf - Action: DOWNLOAD - User: cfo@corp.com - Risk: HIGH</div>
+                <div>2025-08-22 14:20:45 - File: suspicious-file.exe - Action: UPLOAD_BLOCKED - User: intern@corp.com - Risk: CRITICAL</div>
+                <div>2025-08-22 14:18:33 - File: Employee-Database.xlsx - Action: SHARE_EXTERNAL - User: hr@corp.com - Risk: MEDIUM</div>
+                <div>2025-08-22 14:15:22 - Shadow IT Detection: Dropbox access attempt from corp network - BLOCKED</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <p>🛡️ Protected by CASB | 🔍 DLP Enabled | 🔐 Zero Trust Architecture</p>
+            <p>Network: Corporate Internal (10.10.0.0/16) | Application ID: CORP-FILES-002</p>
+        </div>
+    </div>
+</body>
+</html>

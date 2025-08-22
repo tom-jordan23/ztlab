@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMZ Web Server - Public Services</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #27ae60 0%, #2ecc71 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .service-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        .security-zone {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #f39c12;
+        }
+        .firewall-rules {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 20px 0;
+        }
+        .access-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 DMZ Web Services</h1>
+            <p>Public-Facing Services - Demilitarized Zone (172.16.0.0/24)</p>
+        </div>
+
+        <div class="security-zone">
+            <h3>🛡️ DMZ Security Zone</h3>
+            <p>This server operates in the DMZ (Demilitarized Zone), providing controlled access to public services while maintaining security separation from the internal corporate network.</p>
+            <ul>
+                <li>✅ Firewall protection on both sides (external and internal)</li>
+                <li>✅ Limited access to internal resources</li>
+                <li>✅ Enhanced monitoring and logging</li>
+                <li>✅ Regular security scanning and updates</li>
+            </ul>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <h3>📧 Public Email Gateway</h3>
+                <p>External email processing and filtering. Malware scanning, spam detection, and secure email relay to internal mail servers.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #2ecc71;">● ACTIVE</span><br>
+                    <strong>Load:</strong> 23% CPU, 45% Memory<br>
+                    <strong>Emails/hour:</strong> 2,847
+                </div>
+            </div>
+
+            <div class="service-card">
+                <h3>🌍 Corporate Website</h3>
+                <p>Public corporate website with company information, investor relations, career opportunities, and customer support portal.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #2ecc71;">● ACTIVE</span><br>
+                    <strong>Load:</strong> 18% CPU, 32% Memory<br>
+                    <strong>Visitors/day:</strong> 15,432
+                </div>
+            </div>
+
+            <div class="service-card">
+                <h3>🔐 VPN Gateway</h3>
+                <p>Secure remote access entry point for employees. Multi-factor authentication, certificate validation, and traffic inspection.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #2ecc71;">● ACTIVE</span><br>
+                    <strong>Load:</strong> 31% CPU, 28% Memory<br>
+                    <strong>Active sessions:</strong> 156
+                </div>
+            </div>
+
+            <div class="service-card">
+                <h3>📡 API Gateway</h3>
+                <p>Public API endpoints for partner integrations and mobile applications. Rate limiting, authentication, and request validation.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #f39c12;">⚠ RATE LIMITED</span><br>
+                    <strong>Load:</strong> 67% CPU, 58% Memory<br>
+                    <strong>Requests/min:</strong> 12,567
+                </div>
+            </div>
+
+            <div class="service-card">
+                <h3>📊 External DNS</h3>
+                <p>Authoritative DNS server for corporate domains. Load balancing, geographic routing, and DDoS protection.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #2ecc71;">● ACTIVE</span><br>
+                    <strong>Load:</strong> 12% CPU, 19% Memory<br>
+                    <strong>Queries/sec:</strong> 8,234
+                </div>
+            </div>
+
+            <div class="service-card">
+                <h3>🎯 Load Balancer</h3>
+                <p>Traffic distribution and SSL termination. Health checks, failover capabilities, and performance optimization.</p>
+                <div style="margin-top: 15px;">
+                    <strong>Status:</strong> <span style="color: #2ecc71;">● ACTIVE</span><br>
+                    <strong>Load:</strong> 29% CPU, 24% Memory<br>
+                    <strong>Connections:</strong> 3,847
+                </div>
+            </div>
+        </div>
+
+        <div class="access-metrics">
+            <div class="metric-card">
+                <div class="metric-value">156</div>
+                <div>Active Connections</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">2.4TB</div>
+                <div>Data Transferred Today</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">99.8%</div>
+                <div>Uptime This Month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">847</div>
+                <div>Blocked Attacks</div>
+            </div>
+        </div>
+
+        <div class="firewall-rules">
+            <h4>🔥 Active Firewall Rules (Simplified View)</h4>
+            <div>ALLOW: 443/tcp from ANY to DMZ_WEB (HTTPS)</div>
+            <div>ALLOW: 80/tcp from ANY to DMZ_WEB (HTTP -> HTTPS redirect)</div>
+            <div>ALLOW: 25/tcp from ANY to DMZ_MAIL (SMTP)</div>
+            <div>ALLOW: 53/udp from ANY to DMZ_DNS (DNS)</div>
+            <div>DENY: ALL from DMZ to CORPORATE_INTERNAL</div>
+            <div>ALLOW: LIMITED from DMZ to CORPORATE_DB (port 3306, specific IPs)</div>
+            <div>LOG: ALL denied connections</div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h4>📈 Real-time Security Events</h4>
+            <div style="font-family: monospace; font-size: 0.9em;">
+                <div>2025-08-22 14:30:45 - Blocked SSH brute force from 192.168.200.99 (15 attempts)</div>
+                <div>2025-08-22 14:29:12 - SQL injection attempt blocked on API endpoint /user/search</div>
+                <div>2025-08-22 14:27:33 - DDoS mitigation active: Rate limiting 203.0.113.45</div>
+                <div>2025-08-22 14:25:55 - Certificate validation failed for client 198.51.100.32</div>
+                <div>2025-08-22 14:24:18 - Malware signature detected in email attachment - quarantined</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <p>🏗️ DMZ Architecture | 🛡️ SASE Protected | 🔍 24/7 Monitoring</p>
+            <p>Network: DMZ Zone (172.16.0.0/24) | Security Level: Medium Trust</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,258 @@
+networks:
+  management:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1
+  
+  corporate:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/16
+          gateway: 10.10.0.1
+  
+  dmz:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/24
+          gateway: 172.16.0.1
+  
+  external:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.200.0/24
+          gateway: 192.168.200.1
+
+volumes:
+  zitadel_data:
+  openziti_data:
+  opnsense_data:
+  vyos_data:
+  elasticsearch_data:
+  logstash_data:
+  kibana_data:
+  cloud_custodian_data:
+
+services:
+  # Identity and Access Management - Zitadel Simulation
+  zitadel-simulation:
+    image: nginx:alpine
+    container_name: sase-zitadel-simulation
+    restart: unless-stopped
+    networks:
+      - management
+      - corporate
+    ports:
+      - "9080:80"
+    volumes:
+      - ./config/zitadel-simulation:/usr/share/nginx/html
+    command: >
+      sh -c "echo '<html><head><title>SASE Lab - Identity Management</title></head><body><h1>🔐 Identity and Access Management</h1><h2>Zitadel IAM Simulation</h2><p>Modern OAuth2/OIDC identity provider simulation</p><ul><li>✅ Multi-factor authentication</li><li>✅ User lifecycle management</li><li>✅ Zero trust integration</li><li>✅ Enterprise SSO</li></ul><p>In a production environment, this would be Zitadel managing user identities, authentication, and authorization for the entire SASE architecture.</p></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+
+  # Zero Trust Network Access - OpenZiti (Simplified for Demo)
+  ziti-simulation:
+    image: nginx:alpine
+    container_name: sase-ziti-simulation
+    restart: unless-stopped
+    networks:
+      - management
+      - corporate
+    ports:
+      - "1280:80"  # Admin Console simulation
+    volumes:
+      - ./config/ziti-simulation:/usr/share/nginx/html
+    command: >
+      sh -c "echo '<html><body><h1>OpenZiti Controller Simulation</h1><p>ZTNA Demo Interface</p><p>In a production environment, this would be the OpenZiti controller managing zero trust policies.</p></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+
+  # Secure Web Gateway & Firewall - OPNsense simulation
+  opnsense:
+    image: nginx:alpine
+    container_name: sase-opnsense
+    restart: unless-stopped
+    networks:
+      - management
+      - corporate
+      - dmz
+      - external
+    ports:
+      - "443:443"   # Web GUI
+      - "3128:3128" # Squid Proxy
+    volumes:
+      - ./config/opnsense/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/opnsense/html:/usr/share/nginx/html
+      - ./config/opnsense/ssl:/etc/nginx/ssl
+      - opnsense_data:/var/log/nginx
+
+  # SD-WAN Router - Ubuntu with networking tools simulation
+  vyos:
+    image: ubuntu:22.04
+    container_name: sase-vyos
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - management
+      - corporate
+      - external
+    ports:
+      - "2223:22"   # SSH
+      - "9444:8443" # Web GUI
+    volumes:
+      - vyos_data:/opt/config
+      - ./config/vyos:/config
+    command: >
+      bash -c "apt-get update && apt-get install -y 
+      iproute2 iptables tcpdump curl wget net-tools iputils-ping 
+      openssh-server nginx && 
+      service ssh start && 
+      service nginx start && 
+      tail -f /dev/null"
+
+  # Cloud Access Security Broker simulation with Cloud Custodian
+  cloud-custodian:
+    image: ubuntu:22.04
+    container_name: sase-casb
+    restart: unless-stopped
+    environment:
+      - AWS_ACCESS_KEY_ID=demo
+      - AWS_SECRET_ACCESS_KEY=demo
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      - management
+      - corporate
+    volumes:
+      - cloud_custodian_data:/app/data
+      - ./config/custodian:/app/policies
+    command: >
+      bash -c "apt-get update && apt-get install -y python3 python3-pip curl && 
+      pip3 install c7n && 
+      echo 'CASB simulation ready - Cloud Custodian installed' && 
+      tail -f /dev/null"
+
+  # Monitoring Stack - Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: sase-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - management
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  # Logstash for log processing
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: sase-logstash
+    restart: unless-stopped
+    networks:
+      - management
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline
+      - logstash_data:/usr/share/logstash/data
+    depends_on:
+      - elasticsearch
+
+  # Kibana for visualization
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: sase-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - management
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  # Simulated Corporate Applications
+  corporate-app-1:
+    image: nginx:alpine
+    container_name: sase-corp-app-1
+    restart: unless-stopped
+    networks:
+      - corporate
+    ports:
+      - "9081:80"
+    volumes:
+      - ./apps/corporate-app-1:/usr/share/nginx/html
+
+  corporate-app-2:
+    image: httpd:alpine
+    container_name: sase-corp-app-2
+    restart: unless-stopped
+    networks:
+      - corporate
+    ports:
+      - "9082:80"
+    volumes:
+      - ./apps/corporate-app-2:/usr/local/apache2/htdocs
+
+  # DMZ Services
+  dmz-web-server:
+    image: nginx:alpine
+    container_name: sase-dmz-web
+    restart: unless-stopped
+    networks:
+      - dmz
+    ports:
+      - "9083:80"
+    volumes:
+      - ./apps/dmz-web:/usr/share/nginx/html
+
+  # External/Internet simulation
+  external-service:
+    image: httpd:alpine
+    container_name: sase-external-service
+    restart: unless-stopped
+    networks:
+      - external
+    ports:
+      - "9084:80"
+    volumes:
+      - ./apps/external-service:/usr/local/apache2/htdocs
+
+  # Client simulation
+  client-workstation:
+    image: ubuntu:22.04
+    container_name: sase-client
+    restart: unless-stopped
+    networks:
+      - corporate
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./config/client:/home/user
+    command: ["tail", "-f", "/dev/null"]
+
+  # Network monitoring and testing tools
+  network-tools:
+    image: nicolaka/netshoot
+    container_name: sase-nettools
+    restart: unless-stopped
+    networks:
+      - management
+      - corporate
+      - dmz
+      - external
+    tty: true
+    stdin_open: true
+    command: ["tail", "-f", "/dev/null"]
