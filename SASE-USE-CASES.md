@@ -1,6 +1,6 @@
 # SASE Lab Environment - Common Use Cases
 
-This document outlines real-world SASE (Secure Access Service Edge) use cases and provides step-by-step instructions for implementing and demonstrating them using the lab environment.
+This document provides step-by-step instructions for experiencing real-world SASE (Secure Access Service Edge) scenarios using the lab environment. Each use case demonstrates how modern organizations implement zero trust security.
 
 ## Table of Contents
 
@@ -22,69 +22,55 @@ This document outlines real-world SASE (Secure Access Service Edge) use cases an
 ### **Business Scenario**
 A distributed workforce needs secure access to corporate applications from anywhere, on any device, without traditional VPN complexity.
 
-### **SASE Components Used**
-- Zero Trust Network Access (OpenZiti)
-- Identity and Access Management (Zitadel)
-- Secure Web Gateway (OPNsense)
+### **SASE Components Demonstrated**
+- Zero Trust Network Access (ZTNA)
+- Identity and Access Management (IAM)
+- Secure Web Gateway (SWG)
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
 #### Step 1: Start the Lab Environment
-```bash
-./start-sase-lab.sh
-```
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-#### Step 2: Configure Identity Provider
-```bash
-# Access Zitadel IAM console
-echo "Open browser to: http://localhost:9080"
+#### Step 2: Explore Identity Management
+1. Open your web browser
+2. Navigate to **http://localhost:9080** (Identity Management)
+3. Review the IAM simulation interface
+4. Note the features: Multi-factor authentication, User lifecycle management, Enterprise SSO
 
-# Create user accounts for remote workers
-docker exec -it sase-zitadel /bin/sh
-# Note: Use Zitadel web interface for user creation
-```
+#### Step 3: Access Zero Trust Controller
+1. In your browser, navigate to **http://localhost:1280** (Zero Trust Access)
+2. Observe the ZTNA simulation interface
+3. In production, this would show:
+   - Application-specific micro-tunnels
+   - Identity-based access policies
+   - Real-time access decisions
 
-#### Step 3: Set Up Zero Trust Access
-```bash
-# Access OpenZiti controller
-echo "Open browser to: http://localhost:1280"
+#### Step 4: Test Corporate Application Access
+1. Navigate to **http://localhost:9081** (Corporate HR Portal)
+2. Notice the security status indicators:
+   - ✅ ZTNA Protected
+   - 🛡️ Firewall Enabled
+   - 🔐 End-to-End Encrypted
+   - 👤 Identity Verified
+3. Review the access log at the bottom showing security events
 
-# Create identities for remote users
-docker exec -it sase-ziti-controller ziti edge create identity user "remote-worker-1" -a "remote-workers"
-docker exec -it sase-ziti-controller ziti edge create identity user "remote-worker-2" -a "remote-workers"
+#### Step 5: Monitor Security Analytics
+1. Open **http://localhost:5601** (Kibana Dashboard)
+2. Set up index patterns for `sase-logs-*`
+3. Create visualizations to monitor:
+   - User authentication attempts
+   - Application access patterns
+   - Geographic access locations
+   - Failed access attempts
 
-# Create service for HR application
-docker exec -it sase-ziti-controller ziti edge create service "hr-portal" --configs "hr-config"
-
-# Create service policy allowing access
-docker exec -it sase-ziti-controller ziti edge create service-policy "remote-hr-access" Dial \
-  --identity-roles "@remote-workers" --service-roles "@hr-services"
-```
-
-#### Step 4: Test Remote Access
-```bash
-# Simulate external user access attempt
-curl -H "X-Forwarded-For: 203.0.113.45" http://localhost:9081
-
-# Test authenticated access through secure gateway
-curl -H "Authorization: Bearer demo-token" \
-     -H "X-User-Email: remote-worker@company.com" \
-     http://localhost:9081
-```
-
-#### Step 5: Monitor Access Patterns
-```bash
-# View access logs in Kibana
-echo "Open Kibana dashboard: http://localhost:5601"
-echo "Create index pattern: sase-logs-*"
-echo "Filter by: component:ztna AND action:ALLOW"
-```
-
-### **Expected Outcomes**
-- Secure access without VPN complexity
-- Identity-based access control enforced
-- All access attempts logged and monitored
-- Automatic blocking of unauthorized access
+### **What You've Learned**
+- How zero trust validates every access request
+- The role of identity in modern security architecture
+- Real-time monitoring of user access patterns
+- Benefits of application-specific security controls
 
 ---
 
@@ -98,61 +84,41 @@ Organization uses multiple SaaS applications and needs to secure data, monitor u
 - Data Loss Prevention
 - User and Entity Behavior Analytics
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Configure CASB Policies
-```bash
-# Review existing CASB policies
-cat config/custodian/policies.yaml
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Run policy evaluation
-docker exec -it sase-casb custodian run --output-dir=/app/data /app/policies/policies.yaml
+#### Step 2: Access CASB Configuration
+1. Navigate to **http://localhost:9082** (Corporate File Server)
+2. Scroll down to the "CASB Activity Log" section
+3. Review existing policy configurations and monitoring capabilities
+4. Note the different risk levels and policy enforcement options
 
-# Check for policy violations
-docker exec -it sase-casb ls -la /app/data/
-```
+#### Step 3: Test Cloud Service Usage
+1. Open **http://localhost:9084** (External Service)
+2. In the "Cloud Service Simulation" section:
+   - Select "Unauthorized Storage" from the dropdown
+   - Try uploading a test file
+   - Observe the security blocking and risk assessment
+3. Return to **http://localhost:9082** to view the blocked attempt in the CASB Activity Log
 
-#### Step 2: Simulate Cloud Service Usage
-```bash
-# Simulate unauthorized file upload
-echo "Confidential: Social Security Numbers: 123-45-6789, 987-65-4321" > /tmp/sensitive-data.txt
+#### Step 4: Monitor Data Classification
+1. In the External Service (**http://localhost:9084**):
+   - Test uploading files with different sensitivity levels:
+     - Public documents (allowed)
+     - Files containing credit card numbers (blocked)
+     - Files containing social security numbers (blocked)
+2. Watch real-time data classification in action
+3. Check the Corporate File Server (**http://localhost:9082**) for detailed classification reports
 
-curl -X POST http://localhost:9084/upload \
-  -F "file=@/tmp/sensitive-data.txt" \
-  -H "X-User-Email: employee@company.com" \
-  -H "X-Cloud-Service: unauthorized-storage"
-```
-
-#### Step 3: Monitor Cloud Security Events
-```bash
-# Generate cloud security logs
-echo '{"timestamp":"'$(date -Iseconds)'","type":"casb","cloud_service":"Dropbox","user_email":"john.doe@company.com","action":"UPLOAD","resource":"financial-report.xlsx","risk_score":8}' | \
-  docker exec -i sase-logstash logger
-
-# View CASB activity in Corporate File Server
-echo "Open browser to: http://localhost:9082"
-echo "Check CASB Activity Log section"
-```
-
-#### Step 4: Test Data Classification
-```bash
-# Create files with different sensitivity levels
-echo "Public information" > /tmp/public-doc.txt
-echo "CONFIDENTIAL: Customer credit card data 4111-1111-1111-1111" > /tmp/pci-data.txt
-echo "Employee SSN: 123-45-6789, Salary: $75,000" > /tmp/pii-data.txt
-
-# Simulate uploads and check blocking
-for file in public-doc.txt pci-data.txt pii-data.txt; do
-  curl -X POST http://localhost:9082/upload -F "file=@/tmp/$file"
-  sleep 1
-done
-```
-
-### **Expected Outcomes**
-- Automatic detection of sensitive data uploads
+### **What You've Learned**
+- How CASB solutions monitor and control cloud service usage
+- Automatic data classification and sensitivity detection
 - Policy-based blocking of unauthorized cloud services
-- Risk scoring and categorization of cloud activities
-- Compliance reporting for cloud usage
+- Real-time risk assessment and compliance monitoring for cloud activities
 
 ---
 
@@ -166,64 +132,45 @@ Multiple branch offices need secure, optimized connectivity to headquarters and 
 - Secure Web Gateway
 - Traffic Optimization and Routing
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Configure SD-WAN Router
-```bash
-# Access the SD-WAN router
-docker exec -it sase-vyos /bin/bash
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Check network interfaces and routing
-ip addr show
-ip route show
+#### Step 2: Access Network Management
+1. Navigate to **http://localhost:9444** (VyOS Network Management)
+2. Review the network topology showing different zones:
+   - Corporate Network (10.10.0.0/16)
+   - DMZ Network (172.16.0.0/24)
+   - External Network (192.168.200.0/24)
+   - Management Network (192.168.100.0/24)
+3. Observe the routing policies and traffic optimization settings
 
-# Configure traffic policies
-iptables -L
-```
+#### Step 3: Test Network Connectivity
+1. Open **http://localhost:9081** (Corporate HR Portal)
+2. Notice the network path indicators showing optimized routing
+3. Try accessing **http://localhost:9083** (DMZ Web Server)
+4. Compare response times and routing efficiency between different network zones
 
-#### Step 2: Set Up Network Segmentation
-```bash
-# Test connectivity between network segments
-docker exec -it sase-nettools ping -c 3 corporate-app-1
-docker exec -it sase-nettools ping -c 3 dmz-web-server
-docker exec -it sase-nettools ping -c 3 external-service
+#### Step 4: Monitor Traffic Flows
+1. Return to the VyOS interface (**http://localhost:9444**)
+2. View the "Traffic Statistics" section
+3. Generate test traffic by refreshing the corporate applications multiple times
+4. Watch real-time traffic flow visualization and bandwidth utilization
 
-# Check network isolation
-docker exec -it sase-vyos traceroute 10.10.1.1
-docker exec -it sase-vyos traceroute 172.16.0.1
-```
+#### Step 5: Explore Failover Capabilities
+1. In the VyOS interface, locate the "Network Resilience" section
+2. Review failover policies and redundancy configurations
+3. Observe how traffic automatically reroutes during network issues
+4. Check the "Network Health" dashboard for connectivity status
 
-#### Step 3: Monitor Traffic Flows
-```bash
-# Generate inter-branch traffic
-for i in {1..10}; do
-  curl -s http://localhost:9081 > /dev/null
-  curl -s http://localhost:9083 > /dev/null
-  sleep 1
-done
-
-# View traffic statistics
-docker exec -it sase-vyos netstat -i
-docker exec -it sase-vyos ss -tuln
-```
-
-#### Step 4: Test Failover Scenarios
-```bash
-# Simulate network issues
-docker exec -it sase-vyos iptables -A OUTPUT -d 172.16.0.0/24 -j DROP
-
-# Test alternative routing
-docker exec -it sase-nettools traceroute dmz-web-server
-
-# Restore connectivity
-docker exec -it sase-vyos iptables -F OUTPUT
-```
-
-### **Expected Outcomes**
-- Optimized routing between branch offices
-- Automatic failover and redundancy
-- Centralized network management and monitoring
-- Quality of Service (QoS) enforcement
+### **What You've Learned**
+- How SD-WAN optimizes routing between distributed locations
+- The benefits of centralized network management and monitoring
+- Automatic failover and redundancy capabilities
+- Quality of Service (QoS) enforcement for business-critical applications
 
 ---
 
@@ -237,79 +184,53 @@ Prevent sensitive data from leaving the organization through email, file uploads
 - Content Inspection
 - Cloud Access Security Broker
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Create Test Data with PII
-```bash
-# Create various sensitive data patterns
-cat > /tmp/customer-data.csv << EOF
-Name,Email,SSN,Credit Card
-John Doe,john@example.com,123-45-6789,4111-1111-1111-1111
-Jane Smith,jane@example.com,987-65-4321,5555-5555-5555-4444
-Bob Johnson,bob@example.com,456-78-9012,3782-822463-10005
-EOF
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-cat > /tmp/financial-report.txt << EOF
-Q3 Financial Report
-Revenue: $2,500,000
-Customer SSNs for reference:
-- 123-45-6789
-- 987-65-4321
-Bank Account: 123456789
-EOF
-```
+#### Step 2: Access Data Loss Prevention Interface
+1. Navigate to **http://localhost:9082** (Corporate File Server)
+2. Scroll to the "Data Loss Prevention" section
+3. Review the current DLP policies:
+   - Social Security Number detection
+   - Credit card number detection
+   - Confidential document classification
+   - Email content scanning
 
-#### Step 2: Test DLP Policies
-```bash
-# Attempt to upload sensitive files
-curl -X POST http://localhost:9082/upload \
-  -F "file=@/tmp/customer-data.csv" \
-  -H "X-User-Email: employee@company.com"
+#### Step 3: Test File Upload Protection
+1. In the Corporate File Server, try the "Test DLP" feature:
+   - Upload a "Normal Document" (should be allowed)
+   - Upload "Customer Data with SSN" (should be blocked)
+   - Upload "Financial Report with Credit Cards" (should be blocked)
+2. Observe the real-time DLP analysis and blocking messages
+3. Note the detailed violation reports showing exactly what sensitive data was detected
 
-curl -X POST http://localhost:9082/upload \
-  -F "file=@/tmp/financial-report.txt" \
-  -H "X-User-Email: finance@company.com"
+#### Step 4: Monitor DLP Analytics
+1. Open **http://localhost:5601** (Kibana Dashboard)
+2. Look for the DLP monitoring section
+3. Review visualizations showing:
+   - Types of sensitive data detected
+   - Violation trends over time
+   - User behavior patterns
+   - Most common policy violations
 
-# Check DLP blocking in Corporate File Server
-echo "Open browser to: http://localhost:9082"
-echo "Look for blocked uploads in the file list"
-```
+#### Step 5: Test Email DLP Protection
+1. Navigate to **http://localhost:9083** (DMZ Web Server)
+2. Find the "Email DLP Test" section
+3. Try sending emails with different content:
+   - Normal business email (allowed)
+   - Email containing credit card numbers (blocked)
+   - Email with social security numbers (blocked)
+4. Watch real-time email content analysis and policy enforcement
 
-#### Step 3: Monitor DLP Events
-```bash
-# Generate DLP violation logs
-echo '{"timestamp":"'$(date -Iseconds)'","type":"dlp","violation":"PII_DETECTED","file":"customer-list.xlsx","patterns":["SSN","Credit Card"],"user":"john.doe@company.com","action":"BLOCKED"}' | \
-  docker exec -i sase-logstash logger
-
-# Create DLP dashboard queries
-curl -X POST "localhost:5601/api/saved_objects/visualization" \
-  -H "Content-Type: application/json" \
-  -H "kbn-xsrf: true" \
-  -d '{
-    "attributes": {
-      "title": "DLP Violations by Type",
-      "type": "histogram"
-    }
-  }'
-```
-
-#### Step 4: Test Email DLP
-```bash
-# Simulate email with sensitive content
-curl -X POST http://localhost:9083/send-email \
-  -H "Content-Type: application/json" \
-  -d '{
-    "to": "external@competitor.com",
-    "subject": "Customer Information",
-    "body": "Customer SSN: 123-45-6789, Credit Card: 4111-1111-1111-1111"
-  }'
-```
-
-### **Expected Outcomes**
-- Automatic detection of sensitive data patterns
+### **What You've Learned**
+- How DLP systems automatically detect sensitive data patterns
 - Real-time blocking of data exfiltration attempts
-- Detailed violation reporting and analytics
-- Policy-based handling of different data types
+- The importance of policy-based data classification
+- How to monitor and analyze data protection violations
 
 ---
 
@@ -323,69 +244,58 @@ Protect users from web-based threats including malware, phishing, and malicious 
 - URL Filtering
 - Malware Detection
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Test Malware Blocking
-```bash
-# Test malware URL blocking
-curl -v https://localhost:443/malware
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Test executable file blocking
-wget --no-check-certificate https://localhost:443/malware/virus.exe
+#### Step 2: Access Secure Web Gateway
+1. Navigate to **https://localhost:443** (OPNsense Secure Web Gateway)
+2. Accept the security certificate to access the management interface
+3. Review the SWG dashboard showing:
+   - Real-time threat detection status
+   - Web filtering categories
+   - SSL inspection capabilities
+   - Malware detection statistics
 
-# Check blocked responses
-curl -I https://localhost:443/malware/trojan.exe
-```
+#### Step 3: Test Malware Protection
+1. Open **http://localhost:9084** (External Service)
+2. In the "Threat Simulation" section:
+   - Click "Test Malware URL" - should be blocked
+   - Try "Download Suspicious File" - should be prevented
+   - Attempt "Access Infected Site" - should show warning page
+3. Return to the SWG interface to see blocked threats in real-time
 
-#### Step 2: Test Phishing Protection
-```bash
-# Test phishing site blocking
-curl -v https://localhost:443/phishing
+#### Step 4: Test Phishing Protection
+1. In the External Service threat simulation:
+   - Click "Simulate Phishing Email"
+   - Try "Fake Banking Site" - should be blocked with warning
+   - Test "Credential Harvesting" - should be prevented
+2. Observe how the SWG identifies and blocks phishing attempts
 
-# Simulate phishing email links
-curl -H "Referer: phishing-email" https://localhost:443/fake-bank-login
-```
+#### Step 5: Test Web Content Filtering
+1. In the External Service, try accessing different website categories:
+   - Business/News sites (allowed)
+   - Social media (may be restricted based on policy)
+   - Gambling/Adult content (blocked)
+2. Review the SWG policy enforcement and category-based filtering
 
-#### Step 3: Test Category-Based Filtering
-```bash
-# Test different website categories
-curl -H "Host: social-media.com" http://localhost:3128/
-curl -H "Host: gambling.com" http://localhost:3128/
-curl -H "Host: news.com" http://localhost:3128/
+#### Step 6: Monitor Security Analytics
+1. Open **http://localhost:5601** (Kibana Dashboard)
+2. Navigate to the "Web Security" section
+3. Review real-time visualizations of:
+   - Blocked threats by type
+   - Website category access patterns
+   - SSL inspection statistics
+   - Geographic threat sources
 
-# Test suspicious file extensions
-curl https://localhost:443/downloads/file.exe
-curl https://localhost:443/downloads/document.pdf
-```
-
-#### Step 4: Monitor Threat Detection
-```bash
-# Generate web threat logs
-for i in {1..5}; do
-  curl -s https://localhost:443/malware >/dev/null 2>&1
-  curl -s https://localhost:443/phishing >/dev/null 2>&1
-  sleep 2
-done
-
-# View threat statistics in External Service
-echo "Open browser to: http://localhost:9084"
-echo "Check Attack Statistics section"
-```
-
-#### Step 5: Test SSL Inspection
-```bash
-# Test HTTPS inspection capabilities
-openssl s_client -connect localhost:443 -servername sase-lab.local
-
-# Check certificate validation
-curl -v -k https://localhost:443/ 2>&1 | grep -i certificate
-```
-
-### **Expected Outcomes**
-- Real-time malware detection and blocking
-- Phishing site identification and prevention
-- Category-based web filtering enforcement
-- SSL/TLS inspection and certificate validation
+### **What You've Learned**
+- How Secure Web Gateways provide real-time threat protection
+- The effectiveness of phishing detection and prevention
+- Category-based web filtering for organizational policy enforcement
+- SSL/TLS inspection capabilities for encrypted traffic analysis
 
 ---
 
@@ -399,63 +309,58 @@ Identify and control unauthorized cloud services and applications used by employ
 - Network Traffic Analysis
 - Application Discovery
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Simulate Shadow IT Usage
-```bash
-# Simulate unauthorized cloud storage access
-curl -H "Host: unauthorized-dropbox.com" \
-     -H "X-User: employee@company.com" \
-     http://localhost:9084/upload-file
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Simulate personal cloud email
-curl -H "Host: personal-gmail.com" \
-     -H "X-User: employee@company.com" \
-     http://localhost:9084/send-email
+#### Step 2: Access Shadow IT Discovery Dashboard
+1. Navigate to **http://localhost:9082** (Corporate File Server)
+2. Scroll to the "Shadow IT Discovery" section
+3. Review the dashboard showing:
+   - Discovered unauthorized cloud services
+   - Risk assessment for each service
+   - User activity patterns
+   - Policy compliance status
 
-# Simulate unauthorized collaboration tools
-curl -H "Host: unauthorized-slack.com" \
-     -H "X-User: employee@company.com" \
-     http://localhost:9084/chat
-```
+#### Step 3: Simulate Shadow IT Usage
+1. Open **http://localhost:9084** (External Service)
+2. In the "Shadow IT Simulation" section:
+   - Try "Unauthorized Cloud Storage" (should be detected and flagged)
+   - Test "Personal Email Service" (should trigger risk alert)
+   - Use "Unapproved Collaboration Tool" (should be logged as violation)
+3. Each action will be logged and analyzed for risk
 
-#### Step 2: Configure Shadow IT Detection
-```bash
-# Update CASB policies for shadow IT detection
-docker exec -it sase-casb cat /app/policies/policies.yaml | grep -A 10 "shadow-it"
+#### Step 4: Monitor Shadow IT Detection
+1. Return to the Corporate File Server (**http://localhost:9082**)
+2. Check the "CASB Activity Log" for new shadow IT detections
+3. Review the risk scores and policy violations
+4. Note how the system categorizes different types of unauthorized services
 
-# Run shadow IT detection scan
-docker exec -it sase-casb custodian run \
-  --policy-filter="name=detect-shadow-it" \
-  /app/policies/policies.yaml
-```
+#### Step 5: Review Control Policies
+1. In the Shadow IT Discovery section, examine:
+   - Approved vs. unapproved service lists
+   - Automated blocking policies
+   - User notification procedures
+   - Risk-based access controls
+2. See how policies adapt based on service risk levels
 
-#### Step 3: Monitor Unauthorized Services
-```bash
-# Generate shadow IT alerts
-echo '{"timestamp":"'$(date -Iseconds)'","type":"casb","event":"shadow_it_detected","service":"unauthorized_dropbox","user":"john.doe@company.com","risk_level":"high","action":"blocked"}' | \
-  docker exec -i sase-logstash logger
+#### Step 6: Analyze Shadow IT Analytics
+1. Open **http://localhost:5601** (Kibana Dashboard)
+2. Navigate to the "Shadow IT Analytics" section
+3. Review visualizations showing:
+   - Most commonly used unauthorized services
+   - Shadow IT usage by department/user
+   - Risk trends over time
+   - Policy effectiveness metrics
 
-# Check Corporate File Server for shadow IT detection
-echo "Open browser to: http://localhost:9082"
-echo "Look for shadow IT detection in CASB Activity Log"
-```
-
-#### Step 4: Implement Control Policies
-```bash
-# Block unauthorized cloud services via proxy
-curl -x localhost:3128 http://unauthorized-cloud-service.com
-
-# Test approved vs. unapproved services
-curl -x localhost:3128 http://approved-box.com
-curl -x localhost:3128 http://unauthorized-dropbox.com
-```
-
-### **Expected Outcomes**
-- Comprehensive discovery of unauthorized cloud services
-- Risk assessment and categorization of shadow IT
-- Automated blocking of high-risk services
-- User awareness and policy enforcement
+### **What You've Learned**
+- How CASB solutions discover and monitor unauthorized cloud services
+- Automated risk assessment and categorization of shadow IT
+- Policy-based control and blocking of high-risk services
+- The importance of user awareness and education in shadow IT management
 
 ---
 
@@ -469,66 +374,59 @@ Implement microsegmentation to limit lateral movement and enforce least-privileg
 - Network Segmentation
 - Identity-Based Access Control
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Map Network Zones
-```bash
-# Identify network segments
-docker network ls | grep ztlab
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Test current connectivity between zones
-docker exec -it sase-nettools ping -c 1 corporate-app-1  # Should work
-docker exec -it sase-nettools ping -c 1 dmz-web-server   # Should work
-docker exec -it sase-client ping -c 1 dmz-web-server     # Should be limited
-```
+#### Step 2: Access Zero Trust Network Access Console
+1. Navigate to **http://localhost:1280** (OpenZiti Controller)
+2. Review the Zero Trust network segmentation dashboard
+3. Examine the network zones:
+   - Corporate Zone (high trust)
+   - DMZ Zone (medium trust)
+   - External Zone (low trust)
+   - Management Zone (administrative access)
 
-#### Step 2: Implement Microsegmentation
-```bash
-# Create identity-based network policies
-docker exec -it sase-ziti-controller ziti edge create identity device "laptop-001" -a "employee-devices"
-docker exec -it sase-ziti-controller ziti edge create identity device "server-001" -a "production-servers"
+#### Step 3: Explore Network Segmentation Policies
+1. In the ZTNA console, review the "Microsegmentation Policies" section:
+   - Identity-based access rules
+   - Device trust levels
+   - Application-specific permissions
+   - Network zone isolation rules
+2. Notice how access is granted based on identity verification, not network location
 
-# Create segmentation policies
-docker exec -it sase-ziti-controller ziti edge create edge-router-policy "employee-access" \
-  --identity-roles "@employee-devices" --edge-router-roles "@employee-routers"
+#### Step 4: Test Access Controls
+1. Open **http://localhost:9081** (Corporate HR Portal)
+2. Observe the security indicators showing:
+   - ✅ Identity Verified
+   - ✅ Device Trusted
+   - ✅ Network Segment Authorized
+   - 🛡️ Zero Trust Enforced
+3. Try accessing from different simulated contexts (employee, contractor, guest)
 
-docker exec -it sase-ziti-controller ziti edge create service-policy "production-access" Bind \
-  --identity-roles "@production-servers" --service-roles "@production-services"
-```
+#### Step 5: Test Cross-Zone Access Restrictions
+1. Navigate to **http://localhost:9083** (DMZ Web Server)
+2. Attempt to access corporate resources from the DMZ
+3. Observe how zero trust policies prevent lateral movement
+4. Check the access denied messages and security logging
 
-#### Step 3: Test Access Controls
-```bash
-# Test legitimate access
-curl -H "X-Device-ID: laptop-001" \
-     -H "X-User-Role: employee" \
-     http://localhost:9081
+#### Step 6: Monitor Network Segmentation
+1. Open **http://localhost:5601** (Kibana Dashboard)
+2. Navigate to the "Network Segmentation" section
+3. Review visualizations showing:
+   - Network flow patterns between zones
+   - Access violations and denied connections
+   - Identity-based access decisions
+   - Microsegmentation effectiveness metrics
 
-# Test unauthorized access
-curl -H "X-Device-ID: unknown-device" \
-     -H "X-User-Role: guest" \
-     http://localhost:9081
-
-# Test cross-segment access
-docker exec -it sase-client curl http://dmz-web-server
-docker exec -it sase-dmz-web curl http://corporate-app-1
-```
-
-#### Step 4: Monitor Segmentation Violations
-```bash
-# Generate segmentation violation logs
-echo '{"timestamp":"'$(date -Iseconds)'","type":"ztna","event":"segmentation_violation","src_zone":"dmz","dst_zone":"corporate","user":"compromised-account","action":"DENIED"}' | \
-  docker exec -i sase-logstash logger
-
-# Create network flow visualization
-echo "Open Kibana: http://localhost:5601"
-echo "Create network flow dashboard with source/destination zones"
-```
-
-### **Expected Outcomes**
-- Strict network segmentation between trust zones
-- Identity-based access control enforcement
-- Prevention of lateral movement
-- Detailed network flow monitoring and alerting
+### **What You've Learned**
+- How zero trust implements strict network segmentation
+- The power of identity-based access control over network-based rules
+- How microsegmentation prevents lateral movement in security breaches
+- The importance of continuous monitoring and verification in zero trust
 
 ---
 
@@ -542,87 +440,58 @@ Generate compliance reports for regulations like GDPR, HIPAA, PCI-DSS, and SOX.
 - Audit Logging
 - Compliance Reporting
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Configure Audit Logging
-```bash
-# Check logging configuration
-docker exec -it sase-logstash cat /usr/share/logstash/pipeline/logstash.conf
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Verify log collection
-curl http://localhost:9200/_cat/indices | grep sase-logs
-```
+#### Step 2: Access Compliance Dashboard
+1. Navigate to **http://localhost:5601** (Kibana Dashboard)
+2. Look for the "Compliance & Audit" section
+3. Review the pre-configured compliance dashboards:
+   - GDPR Data Processing Activities
+   - PCI-DSS Payment Card Data Access
+   - SOX Financial Controls Monitoring
+   - HIPAA Healthcare Data Protection
 
-#### Step 2: Generate Compliance Events
-```bash
-# Generate GDPR-related events
-echo '{"timestamp":"'$(date -Iseconds)'","type":"gdpr","event":"data_access","user":"john.doe@company.com","data_type":"personal_data","purpose":"customer_service","legal_basis":"consent"}' | \
-  docker exec -i sase-logstash logger
+#### Step 3: Explore GDPR Compliance Monitoring
+1. In Kibana, select the "GDPR Compliance" dashboard
+2. Review real-time monitoring of:
+   - Personal data access events
+   - Data processing purposes and legal basis
+   - User consent tracking
+   - Data retention compliance
+3. Notice automated alerts for potential GDPR violations
 
-# Generate PCI-DSS events
-echo '{"timestamp":"'$(date -Iseconds)'","type":"pci","event":"card_data_access","user":"payment_processor","card_holder":"*1111","transaction_id":"txn_123456"}' | \
-  docker exec -i sase-logstash logger
+#### Step 4: Review PCI-DSS Payment Security
+1. Switch to the "PCI-DSS Monitoring" dashboard
+2. Examine:
+   - Payment card data access logs
+   - Encryption status of cardholder data
+   - Access control effectiveness
+   - Security policy compliance metrics
+3. View automated compliance scoring and violation alerts
 
-# Generate access control events
-echo '{"timestamp":"'$(date -Iseconds)'","type":"access_control","event":"privilege_elevation","user":"admin@company.com","previous_role":"user","new_role":"admin","approver":"manager@company.com"}' | \
-  docker exec -i sase-logstash logger
-```
+#### Step 5: Generate Compliance Reports
+1. In the "Compliance Reporting" section:
+   - Generate a monthly GDPR compliance report
+   - Export PCI-DSS audit trail for the last quarter
+   - Create access control summary for SOX compliance
+2. Review how reports are automatically formatted for auditors
 
-#### Step 3: Create Compliance Dashboards
-```bash
-# Access Kibana for dashboard creation
-echo "Open Kibana: http://localhost:5601"
+#### Step 6: Test Audit Trail Integrity
+1. Navigate to **http://localhost:9081** (Corporate HR Portal)
+2. Perform various actions (login, data access, configuration changes)
+3. Return to Kibana to see these actions logged in real-time
+4. Verify the completeness and tamper-proof nature of audit logs
 
-# Create compliance-specific index patterns
-curl -X POST "localhost:5601/api/saved_objects/index-pattern/compliance-logs" \
-  -H "Content-Type: application/json" \
-  -H "kbn-xsrf: true" \
-  -d '{
-    "attributes": {
-      "title": "sase-logs-*",
-      "timeFieldName": "@timestamp"
-    }
-  }'
-```
-
-#### Step 4: Generate Compliance Reports
-```bash
-# Query for GDPR compliance data
-curl -X GET "localhost:9200/sase-logs-*/_search" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": {
-      "bool": {
-        "must": [
-          {"term": {"type": "gdpr"}},
-          {"range": {"@timestamp": {"gte": "now-30d"}}}
-        ]
-      }
-    },
-    "aggs": {
-      "data_types": {
-        "terms": {"field": "data_type.keyword"}
-      }
-    }
-  }' | jq '.aggregations'
-
-# Generate access report
-curl -X GET "localhost:9200/sase-logs-*/_search" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": {
-      "term": {"type": "access_control"}
-    },
-    "size": 100,
-    "sort": [{"@timestamp": {"order": "desc"}}]
-  }' | jq '.hits.hits[]._source'
-```
-
-### **Expected Outcomes**
-- Comprehensive audit trails for all user activities
-- Automated compliance reporting generation
-- Real-time monitoring of compliance violations
-- Historical data analysis for audit purposes
+### **What You've Learned**
+- How SASE provides comprehensive audit trails for regulatory compliance
+- The automation of compliance reporting for GDPR, PCI-DSS, and other regulations
+- Real-time monitoring and alerting for compliance violations
+- The importance of tamper-proof audit logs for legal and regulatory requirements
 
 ---
 
@@ -636,80 +505,61 @@ Rapidly detect, investigate, and respond to security incidents using SASE teleme
 - Incident Detection
 - Forensic Capabilities
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Simulate Security Incident
-```bash
-# Simulate credential stuffing attack
-for i in {1..20}; do
-  curl -X POST http://localhost:9081/login \
-    -H "X-Forwarded-For: 192.168.200.99" \
-    -d "username=admin&password=password$i"
-  sleep 0.5
-done
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Simulate data exfiltration
-curl -X POST http://localhost:9084/upload \
-  -F "file=@/tmp/customer-data.csv" \
-  -H "X-User-Email: compromised@company.com" \
-  -H "X-Forwarded-For: 203.0.113.45"
-```
+#### Step 2: Access Security Operations Center
+1. Navigate to **http://localhost:5601** (Kibana Dashboard)
+2. Go to the "Security Operations" section
+3. Review the incident detection dashboard showing:
+   - Real-time threat alerts
+   - Attack patterns and trends
+   - Automated response actions
+   - Forensic investigation tools
 
-#### Step 2: Configure Incident Detection Rules
-```bash
-# Generate security incident alerts
-echo '{"timestamp":"'$(date -Iseconds)'","type":"security_incident","severity":"high","event":"brute_force_attack","source_ip":"192.168.200.99","target":"hr-portal","attempts":20,"time_window":"60s"}' | \
-  docker exec -i sase-logstash logger
+#### Step 3: Simulate a Security Incident
+1. Open **http://localhost:9084** (External Service)
+2. In the "Security Incident Simulation" section:
+   - Click "Simulate Brute Force Attack" to generate failed login attempts
+   - Try "Simulate Data Exfiltration" to trigger data loss alerts
+   - Use "Simulate Malware Activity" to test threat detection
+3. Watch real-time alerts appear in the security dashboard
 
-echo '{"timestamp":"'$(date -Iseconds)'","type":"security_incident","severity":"critical","event":"data_exfiltration","user":"compromised@company.com","file_size":"2.5MB","destination":"external_storage","data_classification":"confidential"}' | \
-  docker exec -i sase-logstash logger
-```
+#### Step 4: Investigate the Incident
+1. Return to the Kibana Security Operations dashboard
+2. Click on the generated incident alerts
+3. Review the incident details:
+   - Attack timeline and progression
+   - Affected systems and users
+   - IOCs (Indicators of Compromise)
+   - Risk assessment and impact analysis
 
-#### Step 3: Incident Investigation
-```bash
-# Search for related events
-curl -X GET "localhost:9200/sase-security-alerts-*/_search" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": {
-      "bool": {
-        "must": [
-          {"term": {"source_ip": "192.168.200.99"}},
-          {"range": {"@timestamp": {"gte": "now-1h"}}}
-        ]
-      }
-    },
-    "sort": [{"@timestamp": {"order": "asc"}}]
-  }' | jq '.hits.hits[]._source'
+#### Step 5: Analyze Forensic Data
+1. In the "Incident Investigation" section:
+   - Examine the attack timeline visualization
+   - Review network traffic patterns during the incident
+   - Analyze user behavior anomalies
+   - Check for lateral movement indicators
+2. Use the forensic search tools to correlate related events
 
-# Timeline analysis
-curl -X GET "localhost:9200/sase-logs-*/_search" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": {
-      "term": {"user.keyword": "compromised@company.com"}
-    },
-    "size": 50,
-    "sort": [{"@timestamp": {"order": "asc"}}]
-  }' | jq '.hits.hits[]._source | {timestamp, event, source_ip, action}'
-```
+#### Step 6: Review Automated Response
+1. Navigate to the "Automated Response" section
+2. Observe how the system automatically:
+   - Blocks suspicious IP addresses
+   - Suspends compromised user accounts
+   - Isolates affected network segments
+   - Escalates critical incidents to security teams
+3. Review the response effectiveness and timeline
 
-#### Step 4: Automated Response
-```bash
-# Simulate automated blocking
-echo '{"timestamp":"'$(date -Iseconds)'","type":"automated_response","action":"ip_blocked","source_ip":"192.168.200.99","rule":"brute_force_protection","duration":"24h"}' | \
-  docker exec -i sase-logstash logger
-
-# Simulate user account suspension
-echo '{"timestamp":"'$(date -Iseconds)'","type":"automated_response","action":"account_suspended","user":"compromised@company.com","reason":"suspicious_activity","approver":"security_system"}' | \
-  docker exec -i sase-logstash logger
-```
-
-### **Expected Outcomes**
-- Rapid incident detection and alerting
-- Comprehensive forensic data collection
-- Automated response and containment
-- Detailed incident timeline reconstruction
+### **What You've Learned**
+- How SASE enables rapid incident detection and automated alerting
+- The importance of comprehensive forensic data collection
+- How automated response systems contain threats in real-time
+- The value of detailed incident timeline reconstruction for post-incident analysis
 
 ---
 
@@ -723,97 +573,70 @@ Securely migrate applications and data to the cloud while maintaining security c
 - Data Protection
 - Network Security
 
-### **Lab Implementation**
+### **Step-by-Step Instructions**
 
-#### Step 1: Pre-Migration Assessment
-```bash
-# Assess current security posture
-docker exec -it sase-casb custodian run \
-  --policy-filter="name=unencrypted-storage" \
-  /app/policies/policies.yaml
+#### Step 1: Start the Lab Environment
+1. Open a terminal in the lab directory
+2. Run the startup script: `./start-sase-lab.sh`
+3. Wait for all services to start (approximately 2-3 minutes)
 
-# Inventory current applications
-echo "Current on-premises applications:"
-echo "- HR Portal: http://localhost:9081"
-echo "- File Server: http://localhost:9082"
-echo "- Web Services: http://localhost:9083"
-```
+#### Step 2: Access Cloud Migration Dashboard
+1. Navigate to **http://localhost:9082** (Corporate File Server)
+2. Scroll to the "Cloud Migration Security" section
+3. Review the migration planning dashboard showing:
+   - Current on-premises applications
+   - Cloud security readiness assessment
+   - Migration risk analysis
+   - Security control implementation status
 
-#### Step 2: Implement Cloud Security Controls
-```bash
-# Configure cloud-specific policies
-cat >> /tmp/cloud-migration-policies.yaml << 'EOF'
-policies:
-  - name: cloud-migration-encryption
-    resource: aws.s3
-    description: Ensure all migrated data is encrypted
-    filters:
-      - type: value
-        key: encrypted
-        value: false
-    actions:
-      - type: set-encryption
-        key: AES256
+#### Step 3: Pre-Migration Security Assessment
+1. In the Cloud Migration section, examine:
+   - Data classification and encryption status
+   - Application security posture
+   - Compliance requirements mapping
+   - Risk assessment for each workload
+2. Review recommendations for secure cloud migration
 
-  - name: cloud-migration-access
-    resource: aws.iam-user
-    description: Monitor new cloud access patterns
-    filters:
-      - type: credential-report
-      - type: value
-        key: access_key_1_last_used_date
-        op: less-than
-        value_type: age
-        value: 1
-    actions:
-      - type: notify
-        violation_desc: "New cloud access detected during migration"
-EOF
+#### Step 4: Simulate Cloud Migration Process
+1. Open **http://localhost:9084** (External Service)
+2. In the "Cloud Migration Simulation" section:
+   - Start "Data Migration" to simulate secure data transfer
+   - Initiate "Application Cutover" to test service transition
+   - Monitor "Security Control Deployment" in real-time
+3. Watch how SASE maintains security during migration
 
-# Apply migration policies
-docker exec -it sase-casb custodian run /tmp/cloud-migration-policies.yaml
-```
+#### Step 5: Monitor Migration Security
+1. Navigate to **http://localhost:5601** (Kibana Dashboard)
+2. Access the "Cloud Migration Monitoring" section
+3. Review real-time visualizations of:
+   - Data transfer security status
+   - Application availability during migration
+   - Security control effectiveness
+   - Compliance maintenance metrics
 
-#### Step 3: Monitor Migration Activities
-```bash
-# Simulate cloud migration events
-echo '{"timestamp":"'$(date -Iseconds)'","type":"cloud_migration","event":"data_transfer","source":"on_premises","destination":"aws_s3","data_size":"500MB","classification":"confidential","encrypted":true}' | \
-  docker exec -i sase-logstash logger
+#### Step 6: Validate Post-Migration Security
+1. After the simulated migration, test the applications:
+   - **http://localhost:9081** (HR Portal) - now "cloud-hosted"
+   - **http://localhost:9082** (File Server) - hybrid cloud setup
+2. Verify that all security controls remain effective:
+   - Identity and access management
+   - Data encryption and protection
+   - Network security and monitoring
+   - Compliance reporting
 
-echo '{"timestamp":"'$(date -Iseconds)'","type":"cloud_migration","event":"application_cutover","application":"hr_portal","old_endpoint":"internal","new_endpoint":"cloud","user_impact":"minimal"}' | \
-  docker exec -i sase-logstash logger
-```
+#### Step 7: Review Migration Success Metrics
+1. Return to the Cloud Migration Dashboard
+2. Examine the post-migration assessment:
+   - Security posture comparison (before vs. after)
+   - Performance and availability metrics
+   - Cost optimization achievements
+   - Compliance certification status
 
-#### Step 4: Validate Post-Migration Security
-```bash
-# Test cloud application security
-curl -H "X-Cloud-Provider: AWS" \
-     -H "X-Migration-Phase: post-cutover" \
-     http://localhost:9081
-
-# Verify data protection
-curl -X GET http://localhost:9084/cloud-storage/validate-encryption
-
-# Check compliance posture
-curl -X GET "localhost:9200/sase-logs-*/_search" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": {
-      "bool": {
-        "must": [
-          {"term": {"type": "cloud_migration"}},
-          {"term": {"encrypted": false}}
-        ]
-      }
-    }
-  }' | jq '.hits.total.value'
-```
-
-### **Expected Outcomes**
-- Secure data migration with continuous protection
-- Validation of cloud security controls
-- Compliance maintenance during migration
-- Real-time monitoring of migration activities
+### **What You've Learned**
+- How SASE ensures secure cloud migration with continuous protection
+- The importance of maintaining security controls during digital transformation
+- How to validate and monitor cloud security posture post-migration
+- The role of SASE in enabling safe and compliant cloud adoption
 
 ---
 
