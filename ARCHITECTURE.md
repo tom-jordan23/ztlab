@@ -7,37 +7,37 @@ This document provides comprehensive architectural diagrams and component relati
 ```mermaid
 graph TB
     subgraph "External Network (192.168.200.0/24)"
-        EXT[External Services<br/>Port 9084]
-        THREATS[Simulated Threats<br/>Malware, Phishing]
+        EXT["External Services - Port 9084"]
+        THREATS["Simulated Threats - Malware, Phishing"]
     end
 
     subgraph "DMZ Network (172.16.0.0/24)"
-        DMZ[DMZ Web Server<br/>Port 9083]
+        DMZ["DMZ Web Server - Port 9083"]
         LB[Load Balancer]
         API[API Gateway]
     end
 
     subgraph "SASE Security Layer"
         direction TB
-        SWG[Secure Web Gateway<br/>OPNsense<br/>Port 443, 3128]
-        FW[Firewall as a Service<br/>Integrated with SWG]
-        ZTNA[Zero Trust Network Access<br/>OpenZiti Simulation<br/>Port 1280]
-        IAM[Identity & Access Management<br/>Zitadel Simulation<br/>Port 9080]
-        CASB[Cloud Access Security Broker<br/>Cloud Custodian Simulation]
-        SDWAN[SD-WAN Router<br/>VyOS Simulation<br/>Ports 2223, 9444]
+        SWG["Secure Web Gateway - OPNsense - Ports 443, 3128"]
+        FW["Firewall as a Service - Integrated with SWG"]
+        ZTNA["Zero Trust Network Access - OpenZiti Simulation - Port 1280"]
+        IAM["Identity & Access Management - Zitadel Simulation - Port 9080"]
+        CASB["Cloud Access Security Broker - Cloud Custodian Simulation"]
+        SDWAN["SD-WAN Router - VyOS Simulation - Ports 2223, 9444"]
     end
 
     subgraph "Corporate Network (10.10.0.0/16)"
-        CORP1[Corporate HR Portal<br/>Port 9081]
-        CORP2[Corporate File Server<br/>Port 9082]
+        CORP1["Corporate HR Portal - Port 9081"]
+        CORP2["Corporate File Server - Port 9082"]
         CLIENT[Client Workstation]
     end
 
     subgraph "Management Network (192.168.100.0/24)"
-        ES[Elasticsearch<br/>Port 9200]
-        KIBANA[Kibana Dashboard<br/>Port 5601]
-        LOGSTASH[Logstash<br/>Ports 5044, 9600]
-        TOOLS[Network Tools<br/>NetShoot]
+        ES["Elasticsearch - Port 9200"]
+        KIBANA["Kibana Dashboard - Port 5601"]
+        LOGSTASH["Logstash - Ports 5044, 9600"]
+        TOOLS["Network Tools - NetShoot"]
     end
 
     %% External connections
@@ -91,41 +91,41 @@ graph TB
 graph LR
     subgraph "Identity & Access Management"
         direction TB
-        IAM_SIM[Zitadel Simulation<br/>Port 9080]
-        IAM_FEATURES[OAuth2/OIDC<br/>Multi-Factor Auth<br/>User Lifecycle<br/>Enterprise SSO]
+        IAM_SIM["Zitadel Simulation - Port 9080"]
+        IAM_FEATURES["OAuth2/OIDC | Multi-Factor Auth | User Lifecycle | Enterprise SSO"]
         IAM_SIM --> IAM_FEATURES
     end
 
     subgraph "Zero Trust Network Access"
         direction TB
-        ZTNA_SIM[OpenZiti Simulation<br/>Port 1280]
-        ZTNA_FEATURES[Micro-tunnels<br/>Identity-based Policies<br/>End-to-End Encryption<br/>Application Access]
+        ZTNA_SIM["OpenZiti Simulation - Port 1280"]
+        ZTNA_FEATURES["Micro-tunnels | Identity Policies | End-to-End Encryption | App Access"]
         ZTNA_SIM --> ZTNA_FEATURES
     end
 
     subgraph "Secure Web Gateway"
         direction TB
-        SWG_NGINX[OPNsense + Nginx<br/>Port 443 (HTTPS)<br/>Port 3128 (Proxy)]
-        SWG_FEATURES[URL Filtering<br/>Malware Detection<br/>SSL Inspection<br/>Content Blocking]
-        SWG_SSL[SSL Certificates<br/>Self-signed for Demo]
+        SWG_NGINX["OPNsense + Nginx - Ports 443, 3128"]
+        SWG_FEATURES["URL Filtering | Malware Detection | SSL Inspection | Content Blocking"]
+        SWG_SSL["SSL Certificates - Self-signed Demo"]
         SWG_NGINX --> SWG_FEATURES
         SWG_NGINX --> SWG_SSL
     end
 
     subgraph "Cloud Access Security Broker"
         direction TB
-        CASB_SIM[Cloud Custodian<br/>Ubuntu Container]
-        CASB_FEATURES[Policy-as-Code<br/>Shadow IT Detection<br/>Data Loss Prevention<br/>Compliance Monitoring]
-        CASB_POLICIES[Policy Files<br/>YAML Configuration<br/>AWS Simulation]
+        CASB_SIM["Cloud Custodian - Ubuntu Container"]
+        CASB_FEATURES["Policy-as-Code | Shadow IT Detection | DLP | Compliance"]
+        CASB_POLICIES["Policy Files - YAML Config - AWS Simulation"]
         CASB_SIM --> CASB_FEATURES
         CASB_SIM --> CASB_POLICIES
     end
 
     subgraph "SD-WAN Router"
         direction TB
-        SDWAN_SIM[VyOS Simulation<br/>Ubuntu + Networking Tools]
-        SDWAN_FEATURES[Traffic Optimization<br/>Routing Policies<br/>Quality of Service<br/>Failover]
-        SDWAN_PORTS[SSH: Port 2223<br/>Web: Port 9444]
+        SDWAN_SIM["VyOS Simulation - Ubuntu + Network Tools"]
+        SDWAN_FEATURES["Traffic Optimization | Routing Policies | QoS | Failover"]
+        SDWAN_PORTS["SSH Port 2223 | Web Port 9444"]
         SDWAN_SIM --> SDWAN_FEATURES
         SDWAN_SIM --> SDWAN_PORTS
     end
@@ -155,8 +155,8 @@ graph LR
 graph TB
     subgraph "Internet/External"
         direction LR
-        INTERNET[Internet<br/>Untrusted Zone]
-        EXTERNAL_SVC[External Service<br/>192.168.200.0/24<br/>Port 9084]
+        INTERNET["Internet - Untrusted Zone"]
+        EXTERNAL_SVC["External Service - 192.168.200.0/24 - Port 9084"]
         MALWARE[Malware Sources]
         PHISHING[Phishing Sites]
         
@@ -167,8 +167,8 @@ graph TB
 
     subgraph "DMZ Zone"
         direction LR
-        DMZ_WEB[DMZ Web Server<br/>172.16.0.0/24<br/>Port 9083]
-        DMZ_SERVICES[Public Services<br/>Email Gateway<br/>VPN Gateway<br/>API Gateway]
+        DMZ_WEB["DMZ Web Server - 172.16.0.0/24 - Port 9083"]
+        DMZ_SERVICES["Public Services | Email Gateway | VPN Gateway | API Gateway"]
         
         DMZ_WEB --- DMZ_SERVICES
     end
@@ -178,12 +178,12 @@ graph TB
         SECURITY_STACK[Security Services Stack]
         
         subgraph "Security Services"
-            SWG_MAIN[Secure Web Gateway<br/>443, 3128]
+            SWG_MAIN["Secure Web Gateway - 443, 3128"]
             FIREWALL[Firewall as a Service]
-            ZTNA_MAIN[Zero Trust Access<br/>1280]
-            IAM_MAIN[Identity Management<br/>9080]
+            ZTNA_MAIN["Zero Trust Access - 1280"]
+            IAM_MAIN["Identity Management - 9080"]
             CASB_MAIN[CASB Policies]
-            SDWAN_MAIN[SD-WAN Router<br/>2223, 9444]
+            SDWAN_MAIN["SD-WAN Router - 2223, 9444"]
         end
         
         SECURITY_STACK --- SWG_MAIN
@@ -196,9 +196,9 @@ graph TB
 
     subgraph "Corporate Internal Network"
         direction LR
-        CORP_NET[Corporate Network<br/>10.10.0.0/16]
-        HR_APP[HR Portal<br/>Port 9081]
-        FILE_SRV[File Server<br/>Port 9082]
+        CORP_NET["Corporate Network - 10.10.0.0/16"]
+        HR_APP["HR Portal - Port 9081"]
+        FILE_SRV["File Server - Port 9082"]
         WORKSTATION[Client Workstation]
         
         CORP_NET --- HR_APP
@@ -208,10 +208,10 @@ graph TB
 
     subgraph "Management Network"
         direction LR
-        MGMT_NET[Management<br/>192.168.100.0/24]
-        ELASTIC[Elasticsearch<br/>9200]
-        KIBANA_DASH[Kibana<br/>5601]
-        LOGSTASH_SVC[Logstash<br/>5044, 9600]
+        MGMT_NET["Management - 192.168.100.0/24"]
+        ELASTIC["Elasticsearch - 9200"]
+        KIBANA_DASH["Kibana - 5601"]
+        LOGSTASH_SVC["Logstash - 5044, 9600"]
         NET_TOOLS[Network Tools]
         
         MGMT_NET --- ELASTIC
@@ -302,39 +302,39 @@ sequenceDiagram
 graph TB
     subgraph "Docker Host"
         subgraph "Corporate Network Containers"
-            C1[sase-corp-app-1<br/>nginx:alpine<br/>HR Portal]
-            C2[sase-corp-app-2<br/>httpd:alpine<br/>File Server]
-            C3[sase-client<br/>ubuntu:22.04<br/>Workstation]
+            C1["sase-corp-app-1 | nginx:alpine | HR Portal"]
+            C2["sase-corp-app-2 | httpd:alpine | File Server"]
+            C3["sase-client | ubuntu:22.04 | Workstation"]
         end
 
         subgraph "DMZ Network Containers"
-            D1[sase-dmz-web<br/>nginx:alpine<br/>Public Web]
+            D1["sase-dmz-web | nginx:alpine | Public Web"]
         end
 
         subgraph "External Network Containers"
-            E1[sase-external-service<br/>httpd:alpine<br/>Internet Sim]
+            E1["sase-external-service | httpd:alpine | Internet Sim"]
         end
 
         subgraph "Security Service Containers"
-            S1[sase-opnsense<br/>nginx:alpine<br/>SWG + Firewall]
-            S2[sase-zitadel-simulation<br/>nginx:alpine<br/>IAM]
-            S3[sase-ziti-simulation<br/>nginx:alpine<br/>ZTNA]
-            S4[sase-casb<br/>ubuntu:22.04<br/>CASB]
-            S5[sase-vyos<br/>ubuntu:22.04<br/>SD-WAN]
+            S1["sase-opnsense | nginx:alpine | SWG + Firewall"]
+            S2["sase-zitadel-simulation | nginx:alpine | IAM"]
+            S3["sase-ziti-simulation | nginx:alpine | ZTNA"]
+            S4["sase-casb | ubuntu:22.04 | CASB"]
+            S5["sase-vyos | ubuntu:22.04 | SD-WAN"]
         end
 
         subgraph "Management Network Containers"
-            M1[sase-elasticsearch<br/>elasticsearch:8.11.0<br/>Search Engine]
-            M2[sase-kibana<br/>kibana:8.11.0<br/>Analytics UI]
-            M3[sase-logstash<br/>logstash:8.11.0<br/>Log Processing]
-            M4[sase-nettools<br/>nicolaka/netshoot<br/>Network Utils]
+            M1["sase-elasticsearch | elasticsearch:8.11.0 | Search Engine"]
+            M2["sase-kibana | kibana:8.11.0 | Analytics UI"]
+            M3["sase-logstash | logstash:8.11.0 | Log Processing"]
+            M4["sase-nettools | nicolaka/netshoot | Network Utils"]
         end
 
         subgraph "Docker Networks"
-            N1[ztlab_corporate<br/>10.10.0.0/16]
-            N2[ztlab_dmz<br/>172.16.0.0/24]
-            N3[ztlab_external<br/>192.168.200.0/24]
-            N4[ztlab_management<br/>192.168.100.0/24]
+            N1["ztlab_corporate | 10.10.0.0/16"]
+            N2["ztlab_dmz | 172.16.0.0/24"]
+            N3["ztlab_external | 192.168.200.0/24"]
+            N4["ztlab_management | 192.168.100.0/24"]
         end
 
         subgraph "Persistent Volumes"
@@ -425,18 +425,18 @@ graph TB
 graph LR
     subgraph "Trust Levels"
         direction TB
-        UNTRUSTED[Untrusted Zone<br/>External Network<br/>🔴 No Trust]
-        LIMITED[Limited Trust<br/>DMZ Network<br/>🟡 Controlled Access]
-        TRUSTED[Trusted Zone<br/>Corporate Network<br/>🟢 Full Trust]
-        MANAGEMENT[Management Zone<br/>Admin Network<br/>🔵 Administrative]
+        UNTRUSTED["Untrusted Zone | External Network | No Trust"]
+        LIMITED["Limited Trust | DMZ Network | Controlled Access"]
+        TRUSTED["Trusted Zone | Corporate Network | Full Trust"]
+        MANAGEMENT["Management Zone | Admin Network | Administrative"]
     end
 
     subgraph "Security Controls"
         direction TB
-        PERIMETER[Perimeter Security<br/>SWG + Firewall]
-        IDENTITY[Identity Controls<br/>IAM + ZTNA]
-        DATA[Data Protection<br/>CASB + DLP]
-        MONITORING[Continuous Monitoring<br/>SIEM + Analytics]
+        PERIMETER["Perimeter Security | SWG + Firewall"]
+        IDENTITY["Identity Controls | IAM + ZTNA"]
+        DATA["Data Protection | CASB + DLP"]
+        MONITORING["Continuous Monitoring | SIEM + Analytics"]
     end
 
     UNTRUSTED -->|All Traffic Inspected| PERIMETER
@@ -477,15 +477,15 @@ graph TD
     end
     
     subgraph "Phase 2: Core Applications"
-        CORP_APPS[Corporate Applications<br/>HR Portal, File Server]
-        DMZ_APPS[DMZ Applications<br/>Web Server]
-        EXT_APPS[External Services<br/>Internet Simulation]
+        CORP_APPS["Corporate Applications | HR Portal, File Server"]
+        DMZ_APPS["DMZ Applications | Web Server"]
+        EXT_APPS["External Services | Internet Simulation"]
     end
     
     subgraph "Phase 3: Security Services"
-        GATEWAY[Secure Web Gateway<br/>OPNsense]
-        IDENTITY_SIM[Identity Simulation<br/>Zitadel]
-        ZTNA_SIM[ZTNA Simulation<br/>OpenZiti]
+        GATEWAY["Secure Web Gateway | OPNsense"]
+        IDENTITY_SIM["Identity Simulation | Zitadel"]
+        ZTNA_SIM["ZTNA Simulation | OpenZiti"]
     end
     
     subgraph "Phase 4: Monitoring"
@@ -495,8 +495,8 @@ graph TD
     end
     
     subgraph "Phase 5: Advanced Services"
-        CASB_SVC[CASB Service<br/>Cloud Custodian]
-        SDWAN_SVC[SD-WAN Router<br/>VyOS]
+        CASB_SVC["CASB Service | Cloud Custodian"]
+        SDWAN_SVC["SD-WAN Router | VyOS"]
         NET_TOOLS[Network Tools]
         CLIENT[Client Workstation]
     end
